@@ -425,7 +425,9 @@
 
     async function loadWidget() {
       try {
-        const data = await fetch(WIDGET).then(r => r.json());
+        // cache-bust so the browser always fetches fresh data
+        const res = await fetch(WIDGET + '?_=' + Date.now(), { cache: 'no-store' });
+        const data = await res.json();
         const online = data.presence_count;
         const members = data.members || [];
         const invite = data.instant_invite || INVITE;
@@ -449,11 +451,14 @@
           ).join('');
           document.getElementById('live-card').style.display = 'block';
         }
-      } catch(e) { console.warn('Discord widget unavailable', e); }
+      } catch(e) {
+        console.warn('Discord widget fetch failed:', e);
+        document.getElementById('nav-online').textContent = 'discord.gg/EdYKFQZ6';
+      }
     }
 
     loadWidget();
-    setInterval(loadWidget, 60000);
+    setInterval(loadWidget, 30000);
   </script>
 </body>
 </html>
