@@ -4,7 +4,507 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coffee_Been — The Café Never Closes</title>
+  <link rel="preconnect" hre<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coffee_Bean — The Café Never Closes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; cursor: none !important; }
+
+    :root {
+      --bg: #0e0906;
+      --bg2: #0b0704;
+      --card: #120d08;
+      --accent: #c97c2f;
+      --text: #f0e8de;
+      --muted: #a08060;
+      --dim: #7a6050;
+      --faint: #6b5040;
+      --border: #2a1f15;
+      --border2: #1f1510;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideUp  { from { transform:translateY(100%); } to { transform:translateY(0); } }
+    @keyframes pulse    { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+    @keyframes ticker   { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+    .anim-fade-up  { animation: fadeUp  0.65s ease both; }
+    .anim-slide-up { animation: slideUp 0.65s cubic-bezier(0.16,1,0.3,1) both; }
+    .d1 { animation-delay: 0.1s; }
+    .d2 { animation-delay: 0.2s; }
+    .d3 { animation-delay: 0.35s; }
+    .d4 { animation-delay: 0.5s; }
+
+    /* CUSTOM CURSOR */
+    #cb-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-6px, -4px);
+      transition: transform 0.08s ease;
+    }
+    .cb-steam { opacity: 0; transition: opacity 0.15s; }
+    .cb-click .cb-steam { opacity: 1; }
+    .cb-click .cb-cup { transform: scale(0.92); transform-origin: 16px 22px; }
+
+    /* NAV */
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:40;
+      padding: 16px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(to bottom, #0e0906dd, transparent);
+      backdrop-filter: blur(8px);
+    }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-logo-icon { width:36px; height:36px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .nav-logo-name { font-family:var(--font-head); font-weight:800; font-size:1.1rem; color:var(--text); }
+    .nav-right { display:flex; align-items:center; gap:16px; }
+    .nav-online { display:flex; align-items:center; gap:6px; font-size:0.8rem; color:var(--dim); }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 22px; border-radius:9999px; background:var(--accent); color:var(--bg); font-family:var(--font-body); font-weight:700; font-size:0.9rem; text-decoration:none; transition:transform .2s,box-shadow .2s; box-shadow:0 4px 20px #c97c2f25; }
+    .btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px #c97c2f40; }
+
+    /* HERO */
+    .hero { position:relative; padding:110px 64px 64px; overflow:hidden; }
+    .hero-glow { position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse 80% 60% at 20% 50%,#c97c2f14 0%,transparent 65%), radial-gradient(ellipse 50% 50% at 80% 80%,#8b4b1a0a 0%,transparent 60%); }
+    .hero-ring { position:absolute; top:50%; transform:translateY(-50%); border-radius:50%; border:1px solid; pointer-events:none; }
+    .hero-content { position:relative; z-index:1; max-width:860px; }
+
+    .live-badge { display:inline-flex; align-items:center; gap:8px; font-size:0.72rem; padding:6px 14px; border-radius:9999px; border:1px solid #c97c2f30; background:#1a1108; color:var(--muted); margin-bottom:32px; }
+    .dot-green { width:8px; height:8px; border-radius:50%; background:#22c55e; animation:pulse 2s ease infinite; flex-shrink:0; }
+
+    .hero-overflow { overflow:hidden; margin-bottom:2px; }
+    .hero-line { display:block; font-family:var(--font-head); font-weight:900; font-size:clamp(4.5rem,11vw,9rem); line-height:0.9; letter-spacing:-0.01em; color:var(--text); }
+    .hero-line.amber { color:var(--accent); font-style:italic; }
+
+    .hero-body { display:flex; flex-wrap:wrap; align-items:flex-start; gap:24px; margin:32px 0 48px; }
+    .hero-desc { max-width:300px; font-size:0.95rem; line-height:1.7; color:var(--muted); }
+
+    .hero-stats { display:flex; flex-wrap:wrap; align-items:center; gap:24px; padding-top:32px; border-top:1px solid var(--border); }
+    .stat-val { font-family:var(--font-head); font-weight:900; font-size:2.6rem; line-height:1; color:var(--accent); display:flex; align-items:center; gap:8px; }
+    .stat-label { font-size:0.72rem; margin-top:4px; color:var(--faint); }
+    .stat-divider { width:1px; height:40px; background:var(--border); align-self:center; }
+
+    .member-avatars { display:flex; align-items:center; gap:12px; margin-left:auto; }
+    .avatar-stack { display:flex; }
+    .avatar-wrap { position:relative; margin-right:-8px; }
+    .avatar-wrap img { width:36px; height:36px; border-radius:50%; border:2px solid var(--bg); display:block; }
+    .avatar-status { position:absolute; bottom:0; right:0; width:10px; height:10px; border-radius:50%; border:2px solid var(--bg); }
+    .in-cafe { font-size:0.72rem; color:var(--faint); }
+
+    /* TICKER */
+    .ticker-wrap { background:var(--accent); padding:12px 0; overflow:hidden; white-space:nowrap; }
+    .ticker-inner { display:inline-flex; gap:40px; animation:ticker 28s linear infinite; }
+    .ticker-item { font-family:var(--font-head); font-weight:800; font-size:0.85rem; letter-spacing:0.05em; color:var(--bg); text-transform:uppercase; }
+    .ticker-dot { color:#0e090660; }
+
+    /* SECTIONS */
+    section { padding:96px 64px; }
+    .max-w { max-width:1152px; margin:0 auto; }
+    .section-label { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.2em; font-weight:600; color:var(--accent); margin-bottom:12px; }
+    .section-title { font-family:var(--font-head); font-weight:900; font-size:clamp(2.5rem,6vw,4.5rem); line-height:0.9; }
+    .section-title .amber { color:var(--accent); }
+
+    /* PERKS */
+    .perks-section { background:var(--bg); }
+    .perks-header { margin-bottom:64px; }
+    .perks-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); border:1px solid var(--border); }
+    .perk-card { display:flex; gap:20px; padding:32px; border-bottom:1px solid var(--border); border-right:1px solid var(--border); transition:background .2s; }
+    .perk-card:hover { background:#c97c2f08; }
+    .perk-num { font-size:0.7rem; font-weight:700; color:#3a2910; flex-shrink:0; margin-top:4px; }
+    .perk-title { font-family:var(--font-head); font-weight:800; font-size:1.2rem; margin-bottom:6px; }
+    .perk-body { font-size:0.85rem; line-height:1.6; color:var(--dim); }
+
+    /* MENU BOARD */
+    .menu-section { background:var(--bg2); }
+    .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
+    .menu-desc { font-size:0.85rem; line-height:1.7; color:var(--dim); margin:16px 0 24px; }
+    .tab-btns { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+    .tab-btn { font-size:0.72rem; padding:6px 14px; border-radius:9999px; font-weight:600; border:1px solid var(--border); background:transparent; color:var(--dim); cursor:none; font-family:var(--font-body); transition:all .2s; }
+    .tab-btn.active { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+    .channel-list { border-radius:16px; border:1px solid var(--border); background:var(--card); overflow:hidden; }
+    .channel-item { display:flex; align-items:center; gap:16px; padding:14px 20px; border-bottom:1px solid var(--border2); transition:background .2s; }
+    .channel-item:last-child { border-bottom:none; }
+    .channel-item:hover { background:rgba(255,255,255,0.04); }
+    .channel-emoji { font-size:1.1rem; width:28px; text-align:center; }
+    .channel-name { font-size:0.85rem; font-weight:500; flex:1; }
+    .channel-desc { font-size:0.75rem; color:#5a4030; }
+
+    .stats-panel { display:flex; flex-direction:column; gap:16px; }
+    .stat-card { padding:28px; border-radius:16px; border:1px solid var(--border); background:var(--card); display:flex; align-items:center; justify-content:space-between; transition:border-color .2s; }
+    .stat-card:hover { border-color:#c97c2f40; }
+    .stat-card-label { font-size:0.85rem; color:var(--dim); }
+    .stat-card-val { font-family:var(--font-head); font-weight:900; font-size:3rem; line-height:1; color:var(--accent); display:flex; align-items:center; gap:8px; }
+    .live-card { padding:24px; border-radius:16px; border:1px solid var(--border); background:var(--card); }
+    .live-card-title { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.15em; font-weight:600; color:#5a4030; margin-bottom:16px; }
+    .member-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .member-row:last-child { margin-bottom:0; }
+    .member-ava-wrap { position:relative; flex-shrink:0; }
+    .member-ava-wrap img { width:32px; height:32px; border-radius:50%; display:block; }
+    .member-status-dot { position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-radius:50%; border:2px solid var(--card); }
+    .member-name { font-size:0.85rem; font-weight:500; flex:1; }
+    .member-status-text { font-size:0.72rem; text-transform:capitalize; opacity:0.7; }
+
+    /* ROLES */
+    .roles-section { background:var(--bg); }
+    .roles-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:48px; flex-wrap:wrap; }
+    .roles-sub { max-width:300px; font-size:0.85rem; line-height:1.6; color:var(--dim); }
+    .roles-list { display:flex; flex-direction:column; gap:12px; }
+    .role-row { display:flex; align-items:center; gap:20px; padding:20px; border-radius:16px; border:1px solid var(--border2); background:var(--bg2); transition:border-color .2s; cursor:none; }
+    .role-row:hover { border-color:#c97c2f30; }
+    .role-num { font-size:0.7rem; font-weight:700; color:#3a2910; width:20px; text-align:right; flex-shrink:0; }
+    .role-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; transition:transform .2s; }
+    .role-row:hover .role-icon { transform:scale(1.1); }
+    .role-name { font-weight:700; font-size:0.9rem; flex:1; }
+    .role-desc { font-size:0.75rem; color:#5a4030; }
+    .role-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; opacity:0; transition:opacity .2s; }
+    .role-row:hover .role-dot { opacity:1; }
+
+    /* CTA */
+    .cta-section { background:var(--accent); position:relative; overflow:hidden; padding:112px 64px; }
+    .cta-watermark { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; overflow:hidden; }
+    .cta-watermark span { font-family:var(--font-head); font-weight:900; font-size:18vw; color:#0e0906; opacity:0.1; letter-spacing:-0.02em; white-space:nowrap; }
+    .cta-inner { position:relative; z-index:1; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:40px; max-width:1152px; margin:0 auto; }
+    .cta-title { font-family:var(--font-head); font-weight:900; font-size:clamp(3.5rem,8vw,7rem); line-height:0.88; color:var(--bg); margin-bottom:16px; }
+    .cta-sub { font-size:0.95rem; opacity:0.7; color:var(--bg); max-width:340px; line-height:1.6; }
+    .cta-right { display:flex; flex-direction:column; align-items:center; gap:16px; }
+    .discord-card { display:flex; align-items:center; gap:16px; padding:20px 24px; border-radius:16px; background:var(--bg); min-width:280px; }
+    .discord-card-icon { width:48px; height:48px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+    .discord-card-name { font-weight:700; font-size:0.9rem; color:var(--text); }
+    .discord-card-sub { font-size:0.75rem; color:var(--faint); }
+    .btn-dark { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:16px 32px; border-radius:16px; background:var(--bg); color:var(--text); font-family:var(--font-body); font-weight:700; font-size:1rem; text-decoration:none; transition:opacity .2s,transform .2s; }
+    .btn-dark:hover { opacity:0.9; transform:translateY(-2px); }
+
+    /* FOOTER */
+    footer { background:var(--bg2); padding:32px 64px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; border-top:1px solid var(--border); }
+    .footer-logo { display:flex; align-items:center; gap:10px; }
+    .footer-logo-icon { width:32px; height:32px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:14px; }
+    .footer-name { font-family:var(--font-head); font-weight:800; font-size:1rem; color:var(--text); }
+    .footer-copy { font-size:0.75rem; color:var(--faint); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding:14px 20px; }
+      .nav-logo-name { display:none; }
+      .hero { padding:90px 20px 48px; }
+      section { padding:64px 20px; }
+      .menu-grid { grid-template-columns:1fr; gap:40px; }
+      .cta-section { padding:80px 20px; }
+      footer { padding:24px 20px; }
+      .member-avatars { margin-left:0; }
+      .roles-header { flex-direction:column; align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CUSTOM CURSOR -->
+  <svg id="cb-cursor" width="32" height="36" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g class="cb-steam">
+      <path d="M10 8 C10 5,13 5,13 2" stroke="#c97c2f" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+      <path d="M16 9 C16 6,19 6,19 3" stroke="#c97c2f" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    </g>
+    <g class="cb-cup">
+      <rect x="5" y="13" width="20" height="14" rx="3" fill="#c97c2f"/>
+      <path d="M25 16 Q30 16 30 21 Q30 26 25 26" stroke="#c97c2f" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <rect x="5" y="27" width="20" height="3" rx="1.5" fill="#a8621f"/>
+      <rect x="7" y="13" width="16" height="5" rx="2" fill="#b06a22" opacity="0.5"/>
+    </g>
+  </svg>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">
+      <div class="nav-logo-icon">☕</div>
+      <span class="nav-logo-name">Coffee_Been</span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-online">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+        <span id="nav-online">— online</span>
+      </div>
+      <a class="btn join-btn" href="https://discord.com/invite/EdYKFQZ6" target="_blank" rel="noopener">Join Server →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-ring" style="width:500px;height:500px;border-color:#c97c2f12;right:-120px;"></div>
+    <div class="hero-ring" style="width:360px;height:360px;border-color:#c97c2f18;right:-40px;"></div>
+    <div class="hero-ring" style="width:220px;height:220px;border-color:#c97c2f25;right:40px;"></div>
+    <div class="hero-content">
+      <div class="live-badge anim-fade-up">
+        <div class="dot-green"></div>
+        24/7 Active &nbsp;·&nbsp; Tunisian Community &nbsp;·&nbsp; 🇹🇳
+      </div>
+      <div class="hero-overflow"><span class="hero-line anim-slide-up">The Cafe</span></div>
+      <div class="hero-overflow"><span class="hero-line amber anim-slide-up d1">never</span></div>
+      <div class="hero-overflow" style="margin-bottom:0"><span class="hero-line anim-slide-up d2">closes.</span></div>
+      <div class="hero-body anim-fade-up d3">
+        <p class="hero-desc">Coffee_Been is a cozy Tunisian Discord community. Chill, chat, play, and enjoy good vibes — any time of day.</p>
+        <a class="btn join-btn" href="https://discord.com/invite/EdYKFQZ6" target="_blank" rel="noopener">☕ Join Free →</a>
+      </div>
+      <div class="hero-stats anim-fade-up d4">
+        <div>
+          <div class="stat-val"><span id="online-count">—</span><div class="dot-green"></div></div>
+          <div class="stat-label">Online now</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div>
+          <div class="stat-val">19</div>
+          <div class="stat-label">Channels</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div>
+          <div class="stat-val">7</div>
+          <div class="stat-label">Unique Roles</div>
+        </div>
+        <div class="member-avatars" id="member-avatars" style="display:none">
+          <div class="avatar-stack" id="avatar-stack"></div>
+          <span class="in-cafe" id="in-cafe-text"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner">
+      <span class="ticker-item">☕ Daily Brew</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">😂 Espresso Laughs</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🔊 Coffee Lounge</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🇹🇳 Tunisian Vibes</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🧋 Trio Tables</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">💬 Daily-Brew Chats</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">💤 IDLE Beans</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🤝 Real Community</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">☕ Daily Brew</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">😂 Espresso Laughs</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🔊 Coffee Lounge</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🇹🇳 Tunisian Vibes</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🧋 Trio Tables</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">💬 Daily-Brew Chats</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">💤 IDLE Beans</span><span class="ticker-dot">·</span>
+      <span class="ticker-item">🤝 Real Community</span><span class="ticker-dot">·</span>
+    </div>
+  </div>
+
+  <!-- PERKS -->
+  <section class="perks-section">
+    <div class="max-w">
+      <div class="perks-header">
+        <div class="section-label">Why join</div>
+        <div class="section-title">Six reasons to<br><span class="amber">pull up a chair</span></div>
+      </div>
+      <div class="perks-grid">
+        <div class="perk-card"><span class="perk-num">01</span><div><div class="perk-title">Always Awake</div><div class="perk-body">Someone's always in the café — 2pm or 2am, the doors never close.</div></div></div>
+        <div class="perk-card"><span class="perk-num">02</span><div><div class="perk-title">Zero Toxicity</div><div class="perk-body">Strict but fair moderation. The vibe stays clean and welcoming.</div></div></div>
+        <div class="perk-card"><span class="perk-num">03</span><div><div class="perk-title">BaristaBot</div><div class="perk-body">Our custom bot handles everything — commands, fun, automation.</div></div></div>
+        <div class="perk-card"><span class="perk-num">04</span><div><div class="perk-title">Earn Your Rank</div><div class="perk-body">From Fresh Bean to Coffee Master, every level unlocks something new.</div></div></div>
+        <div class="perk-card"><span class="perk-num">05</span><div><div class="perk-title">Live Events</div><div class="perk-body">Gaming nights, voice sessions, and community challenges every week.</div></div></div>
+        <div class="perk-card"><span class="perk-num">06</span><div><div class="perk-title">Tunisian Soul</div><div class="perk-body">Built from Tunisia, open to the world. Real people, real vibes.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU BOARD -->
+  <section class="menu-section">
+    <div class="max-w">
+      <div class="menu-grid">
+        <div>
+          <div class="section-label">The Menu</div>
+          <div class="section-title">Every channel<br>has a <span class="amber">purpose.</span></div>
+          <p class="menu-desc">No noise. No dead channels. Each room is designed for a specific vibe — jump in anywhere and feel at home.</p>
+          <div class="tab-btns">
+            <button class="tab-btn active" onclick="switchTab(0,this)">WELCOME</button>
+            <button class="tab-btn" onclick="switchTab(1,this)">COMMUNITY</button>
+            <button class="tab-btn" onclick="switchTab(2,this)">VOICE</button>
+          </div>
+          <div class="channel-list" id="channel-list"></div>
+        </div>
+        <div class="stats-panel">
+          <div class="stat-card"><span class="stat-card-label">Channels to explore</span><span class="stat-card-val">19</span></div>
+          <div class="stat-card"><span class="stat-card-label">Online right now</span><div class="stat-card-val"><span id="stat-online2">—</span><div class="dot-green" id="live-dot" style="display:none"></div></div></div>
+          <div class="stat-card"><span class="stat-card-label">Roles to unlock</span><span class="stat-card-val">7</span></div>
+          <div class="live-card" id="live-card" style="display:none">
+            <div class="live-card-title">In the café right now</div>
+            <div id="live-members"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section class="roles-section">
+    <div class="max-w">
+      <div class="roles-header">
+        <div>
+          <div class="section-label">The Hierarchy</div>
+          <div class="section-title">Earn your<br><span class="amber">rank.</span></div>
+        </div>
+        <p class="roles-sub">Start as a Fresh Bean, grind your way up. Every role comes with its own perks and channels.</p>
+      </div>
+      <div class="roles-list">
+        <div class="role-row"><span class="role-num">01</span><div class="role-icon" style="background:#f59e0b15">👑</div><span class="role-name" style="color:#f59e0b">Coffee Master</span><span class="role-desc">Owner</span><div class="role-dot" style="background:#f59e0b"></div></div>
+        <div class="role-row"><span class="role-num">02</span><div class="role-icon" style="background:#60a5fa15">🤖</div><span class="role-name" style="color:#60a5fa">BaristaBot</span><span class="role-desc">Custom Bot</span><div class="role-dot" style="background:#60a5fa"></div></div>
+        <div class="role-row"><span class="role-num">03</span><div class="role-icon" style="background:#f8717115">🛠️</div><span class="role-name" style="color:#f87171">Barista Pro</span><span class="role-desc">Admins</span><div class="role-dot" style="background:#f87171"></div></div>
+        <div class="role-row"><span class="role-num">04</span><div class="role-icon" style="background:#34d39915">🔧</div><span class="role-name" style="color:#34d399">Coffee Keeper</span><span class="role-desc">Mods</span><div class="role-dot" style="background:#34d399"></div></div>
+        <div class="role-row"><span class="role-num">05</span><div class="role-icon" style="background:#a78bfa15">💜</div><span class="role-name" style="color:#a78bfa">VI Bean</span><span class="role-desc">VIPs</span><div class="role-dot" style="background:#a78bfa"></div></div>
+        <div class="role-row"><span class="role-num">06</span><div class="role-icon" style="background:#fb923c15">☕</div><span class="role-name" style="color:#fb923c">Coffee Lover</span><span class="role-desc">Members</span><div class="role-dot" style="background:#fb923c"></div></div>
+        <div class="role-row"><span class="role-num">07</span><div class="role-icon" style="background:#86efac15">🌱</div><span class="role-name" style="color:#86efac">Fresh Bean</span><span class="role-desc">New Members</span><div class="role-dot" style="background:#86efac"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-watermark"><span>COFFEE_BEEN</span></div>
+    <div class="cta-inner">
+      <div>
+        <div class="cta-title">Your chair<br>is waiting.</div>
+        <p class="cta-sub">Free to join. Always warm. The café never closes — so there's no bad time to walk in.</p>
+      </div>
+      <div class="cta-right">
+        <div class="discord-card">
+          <div class="discord-card-icon">☕</div>
+          <div>
+            <div class="discord-card-name">Coffee_Been 🇹🇳</div>
+            <div class="discord-card-sub" id="cta-online-text">Open now</div>
+          </div>
+          <div style="margin-left:auto"><div class="dot-green"></div></div>
+        </div>
+        <a class="btn-dark join-btn" href="https://discord.com/invite/EdYKFQZ6" target="_blank" rel="noopener">☕ Join for Free →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <div class="footer-logo-icon">☕</div>
+      <span class="footer-name">Coffee_Been</span>
+    </div>
+    <span class="footer-copy">© 2025 Coffee_Been · Made in Tunisia 🇹🇳</span>
+  </footer>
+
+  <script>
+    // CUSTOM CURSOR
+    const _cur = document.getElementById('cb-cursor');
+    document.addEventListener('mousemove', e => {
+      _cur.style.left = e.clientX + 'px';
+      _cur.style.top  = e.clientY + 'px';
+    });
+    document.addEventListener('mousedown', () => _cur.classList.add('cb-click'));
+    document.addEventListener('mouseup',   () => _cur.classList.remove('cb-click'));
+
+    // DISCORD WIDGET
+    const WIDGET = 'https://discord.com/api/guilds/1490796903586336918/widget.json';
+    const INVITE = 'https://discord.com/invite/EdYKFQZ6';
+    const STATUS_CLR = { online:'#22c55e', idle:'#f59e0b', dnd:'#ef4444' };
+
+    const CHANNELS = [
+      {tab:0, emoji:'📜', name:'house-rules',       desc:'Read before sipping'},
+      {tab:0, emoji:'☕', name:'first-sip-welcome', desc:'Introduce yourself'},
+      {tab:1, emoji:'💬', name:'daily-brew',        desc:'Main chat'},
+      {tab:1, emoji:'😂', name:'espresso-laughs',   desc:'Memes & fun'},
+      {tab:1, emoji:'🤖', name:'auto-barista',      desc:'Bot commands'},
+      {tab:2, emoji:'🔊', name:'Coffee-lounge',     desc:'Open lounge'},
+      {tab:2, emoji:'☕', name:'Duo-Table-1',       desc:'2-person table'},
+      {tab:2, emoji:'☕', name:'Duo-Table-2',       desc:'2-person table'},
+      {tab:2, emoji:'☕', name:'Duo-Table-3',       desc:'2-person table'},
+      {tab:2, emoji:'🧋', name:'Trio-Table-1',      desc:'3-person table'},
+      {tab:2, emoji:'🧋', name:'Trio-Table-2',      desc:'3-person table'},
+      {tab:2, emoji:'🍵', name:'Squad-Table-1',     desc:'Group table'},
+      {tab:2, emoji:'🍵', name:'Squad-Table-2',     desc:'Group table'},
+      {tab:2, emoji:'🍵', name:'Squad-Table-3',     desc:'Group table'},
+      {tab:2, emoji:'💤', name:'IDLE-Beans',        desc:'AFK zone'},
+    ];
+
+    function renderChannels(tab) {
+      document.getElementById('channel-list').innerHTML = CHANNELS
+        .filter(c => c.tab === tab)
+        .map(c => `<div class="channel-item"><span class="channel-emoji">${c.emoji}</span><span class="channel-name">#${c.name}</span><span class="channel-desc">${c.desc}</span></div>`)
+        .join('');
+    }
+
+    function switchTab(idx, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderChannels(idx);
+    }
+
+    renderChannels(0);
+
+    async function loadWidget() {
+      try {
+        const res = await fetch(WIDGET + '?_=' + Date.now(), { cache: 'no-store' });
+        const data = await res.json();
+        const online = data.presence_count;
+        const members = data.members || [];
+        const invite = data.instant_invite || INVITE;
+
+        document.querySelectorAll('.join-btn').forEach(el => el.href = invite);
+        document.getElementById('nav-online').textContent = online + ' online';
+        document.getElementById('online-count').textContent = online;
+        document.getElementById('stat-online2').textContent = online;
+        document.getElementById('live-dot').style.display = 'block';
+        document.getElementById('cta-online-text').textContent = online + ' online now';
+
+        if (members.length > 0) {
+          document.getElementById('avatar-stack').innerHTML = members.slice(0,5).map(m =>
+            `<div class="avatar-wrap" title="${m.username}"><img src="${m.avatar_url}" alt="${m.username}"><div class="avatar-status" style="background:${STATUS_CLR[m.status]||'#6b7280'}"></div></div>`
+          ).join('');
+          document.getElementById('in-cafe-text').textContent = members.slice(0,3).map(m=>m.username).join(', ') + ' in the café';
+          document.getElementById('member-avatars').style.display = 'flex';
+
+          document.getElementById('live-members').innerHTML = members.slice(0,4).map(m =>
+            `<div class="member-row"><div class="member-ava-wrap"><img src="${m.avatar_url}" alt="${m.username}"><div class="member-status-dot" style="background:${STATUS_CLR[m.status]||'#6b7280'}"></div></div><span class="member-name">${m.username}</span><span class="member-status-text" style="color:${STATUS_CLR[m.status]||'#6b7280'}">${m.status}</span></div>`
+          ).join('');
+          document.getElementById('live-card').style.display = 'block';
+        }
+      } catch(e) {
+        console.warn('Discord widget fetch failed:', e);
+        document.getElementById('nav-online').textContent = 'discord.gg/EdYKFQZ6';
+      }
+    }
+
+    loadWidget();
+    setInterval(loadWidget, 30000);
+  </script>
+</body>
+</html>
+f="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
